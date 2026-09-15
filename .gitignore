@@ -8,3 +8,11 @@ wheels/
 
 # Virtual environments
 .venv
+Data/binaryCheckerboard.mat
+Data/movieBinnedSpiking.mat
+Data/MultipleMoviesStim_1_tree.avi
+Data/MultipleMoviesStim_2_water.avi
+Data/MultipleMoviesStim_3_grasses.avi
+Data/MultipleMoviesStim_4_fish.avi
+Data/MultipleMoviesStim_5_opticflow.avi
+Data/README.md
