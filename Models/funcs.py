@@ -14,7 +14,7 @@ def corrs(sigma):
         - corrs: a (B,N*(N-1)/2) matrix of the correlation of the N neurons at B indices, for all corrs[b,i*j/2] where i < j
     '''
 
-    return np.apply_along_axis(func1d=lambda x : np.outer(x,x)[np.tril_indices(x.shape[0]-1)],axis=1,arr=sigma)
+    return jnp.apply_along_axis(func1d=lambda x : jnp.outer(x,x)[jnp.tril_indices(x.shape[0]-1)],axis=1,arr=sigma)
 
 def pt(sigma,**X):
     '''
@@ -32,14 +32,14 @@ def pt(sigma,**X):
     if 'X' in X.keys():
         X_ = X['X']
     else:
-        X_ = np.concatenate((X['h'],X['J']))
+        X_ = jnp.concatenate((X['h'],X['J']))
     
     if 'Z' in X.keys():
         Z_ = X['Z']
     else:
         Z_ = 1
 
-    pt = np.exp(-1*(sigma@X_)) / Z_
+    pt = jnp.exp(-1*jnp.matmul(sigma,X_)) / Z_
     
     return pt
 
@@ -52,7 +52,7 @@ def observables(sigma):
         - observables: (B, N + N*(N-1)/2) vector of the observables at that point in time
     '''
     corr = corrs(sigma)
-    return np.concatenate((sigma,corr),axis=1)
+    return jnp.concatenate((sigma,corr),axis=1)
 
 def P_bar(sigma):
     ''' 
@@ -90,6 +90,7 @@ def QMC(sigma,M):
     Output:
         QMC: a montecarlo approximation of Q
     '''
+    B,N = sigma.shape
     MC = rng.choice(sigma,M,replace=True)
     QMC = observables(MC)
     QMC = QMC.mean(axis=0)
@@ -107,18 +108,18 @@ def susc_bar(sigma):
     '''
     B,N = sigma.shape
     all_obs = observables(sigma)
-    obs_prod_bar = np.apply_along_axis(lambda x: np.outer(x,x),axis=1,arr=all_obs).mean(axis=0)
+    obs_prod_bar = jnp.apply_along_axis(lambda x: jnp.outer(x,x),axis=1,arr=all_obs).mean(axis=0)
     P_ = all_obs.mean(axis=0)
-    prod_obs_bar = np.outer(P_,P_)
+    prod_obs_bar = jnp.outer(P_,P_)
     return obs_prod_bar - prod_obs_bar
 
 def epsilon(P_bar,inv_sus,Q,B):
     D = P_bar.shape[0]
     diff = P_bar - Q
-    return np.sqrt(np.abs((2*B / D)*(diff@inv_sus@diff)))
+    return jnp.sqrt(jnp.abs((2*B / D)*(diff@inv_sus@diff)))
 
 def all_combs_obs(N):
-    combs = np.fromiter(itertools.product(range(2),repeat = N),dtype=np.dtype((np.float32,N)),count=2**N)
+    combs = jnp.array(np.fromiter(itertools.product(range(2),repeat = N),dtype=np.dtype((jnp.float32,N)),count=2**N))
 
     combs_obs = observables(combs)
 

@@ -1,4 +1,6 @@
 from funcs import *
+import jax
+import jax.numpy as jnp
 
 class fixed_h_MaxEnt:
     def __init__(
@@ -23,12 +25,13 @@ class fixed_h_MaxEnt:
             print('not implemented yet!')
             return None
 
+
         combs_obs = all_combs_obs(N)
         Z0 = Z(X0,combs_obs)
         Q0 = Q(X0,combs_obs,Z0)
         P_ = P_bar(sigma)
         X_ = susc_bar(sigma)
-        inv_X_ = np.linalg.pinv(X_,hermitian=True)
+        inv_X_ = jnp.linalg.pinv(X_,hermitian=True)
         e0 = epsilon(P_,inv_X_,Q0,B)
 
         et = e0
@@ -36,35 +39,36 @@ class fixed_h_MaxEnt:
         Xt = X0
         at = self.a0
         Zt = Z0
-        i = 0
-        while et >= 1 or i < 10000:
-            Mt = np.ceil(np.min((B / et**2,B))).astype(int)
+
+        while et >= 1:
+            Mt = jnp.ceil(jnp.minimum(B/et**2,B)).astype(jnp.int32)
             del_Xt = at*inv_X_@(P_ - Qt)
             Xt_1 = Xt + del_Xt
-            Zt_1 = Z(Xt_1,combs_obs)
             Qt_1 = QMC(sigma,Mt)
             et_1 = epsilon(P_,inv_X_,Qt_1,B)
             if et_1 < et:
-                print(et)
+                print(et_1)
                 Qt = Qt_1
                 Xt = Xt_1
                 et = et_1
                 at_1 = at*self.del_p
                 at = at_1
-                Zt = Zt_1
             else:
-                at_1 = at / self.del_n
-            
-            i += 1
+                at_1 = at/self.del_n
+                at = at_1
         
-        self.X = Xt
-        self.Z = Zt
+        Xf = Xt
+        Zf = Zt
+        ef = et
+        self.X = Xf
+        self.Z = Zf
 
-        return Xt
+        return Xf,ef
     
     def predict(self,sigmat):
         if self.X == None:
             print('Hasn\'t been fit yet!')
             return None
         return pt(sigmat,X=self.X,Z = self.Z)
+            
             
