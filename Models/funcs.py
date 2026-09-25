@@ -3,6 +3,9 @@ import itertools
 import functools
 from numpy import random as random
 
+import jax
+import jax.numpy as jnp
+
 rng = random.default_rng()
 
 def corrs(sigma):

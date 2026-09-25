@@ -47,7 +47,6 @@ class fixed_h_MaxEnt:
             Qt_1 = QMC(sigma,Mt)
             et_1 = epsilon(P_,inv_X_,Qt_1,B)
             if et_1 < et:
-                print(et_1)
                 Qt = Qt_1
                 Xt = Xt_1
                 et = et_1
@@ -69,6 +68,4 @@ class fixed_h_MaxEnt:
         if self.X == None:
             print('Hasn\'t been fit yet!')
             return None
-        return pt(sigmat,X=self.X,Z = self.Z)
-            
-            
+        return pt(sigmat,X=self.X,Z = self.Z)     
