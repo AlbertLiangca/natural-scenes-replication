@@ -15,6 +15,7 @@ class fixed_h_MaxEnt:
         self.del_p = del_p
         self.del_n = del_n
         self.X = None
+        self.Z = None
 
     def fit(self,sigma):
         B,N = sigma.shape
@@ -65,7 +66,15 @@ class fixed_h_MaxEnt:
         return Xf,ef
     
     def predict(self,sigmat):
-        if self.X == None:
+        if self.X == None or self.Z == None:
             print('Hasn\'t been fit yet!')
             return None
-        return pt(sigmat,X=self.X,Z = self.Z)     
+        return pt(sigmat,X=self.X,Z = self.Z)
+
+    def set_X(self,X):
+        self.X = X
+        return None
+    
+    def set_Z(self,Z):
+        self.Z = Z
+        return None

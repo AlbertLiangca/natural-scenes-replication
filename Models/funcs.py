@@ -25,7 +25,7 @@ def pt(sigma,**X):
         - sigma: a (N+N*(N-1)/2,) vector of the response of N neurons at a particular time t, where sigma[i] corresponds to the response of the ith neuron, concatenated with the cross-correlations of each neuron at that time
             - sigma can also be (B,N+N*(N-1)/2)
         - X: a (N + N*(N-1)/2 , ) vector containing:
-            - h: (B*N,) vector of the time-dependent field, where h[N*t + n] corresponds to the time dependent field of the nth neuron at time t
+            - h: (N,) vector of the time-dependent field, where h[N*t + n] corresponds to the time dependent field of the nth neuron at time t
             - J: (N(N-1)/2,) vector of the fixed couplings between two neurons
 
     Output:
