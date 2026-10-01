@@ -78,7 +78,7 @@ def Q(X,combs_obs,Z):
         Q: a (N + N*(N-1)/2 , ) vector of the model averages of the observables.
     '''
 
-    weighted_observables = combs_obs*pt(combs_obs,X=X).reshape(-1,1)
+    weighted_observables = combs_obs*pt(combs_obs,X=X,Z=Z).reshape(-1,1)
 
     Q = weighted_observables.sum(axis=0)
 
